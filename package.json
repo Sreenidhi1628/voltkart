@@ -1,0 +1,21 @@
+{
+  "name": "voltkart",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "canvas-confetti": "^1.9.4",
+    "gsap": "^3.12.7",
+    "lenis": "^1.1.20",
+    "three": "^0.174.0",
+    "vanilla-tilt": "^1.8.1"
+  },
+  "devDependencies": {
+    "vite": "^6.2.0"
+  }
+}

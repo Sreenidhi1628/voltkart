@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoltKart — Next-Gen 3D Electronics & Hardware Experience</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="description" content="Award-winning 3D e-commerce experience for smartphones, laptops, smart TVs, hi-fi audio and adapters with real-time hardware compatibility checking." />
+  
+  <script>
+    // Ensure White Theme by default and clear legacy dark cache
+    try {
+      if (!localStorage.getItem('voltkart_theme_v2')) {
+        localStorage.removeItem('voltkart_theme');
+        localStorage.setItem('voltkart_theme_v2', 'light');
+      }
+      var t = localStorage.getItem('voltkart_theme_v2') || 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    } catch(e) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  </script>
+
+  <!-- CSS Stylesheets -->
+  <link rel="stylesheet" href="/src/styles/base.css" />
+  <link rel="stylesheet" href="/src/styles/layout.css" />
+  <link rel="stylesheet" href="/src/styles/components.css" />
+  <link rel="stylesheet" href="/src/styles/animations.css" />
+  <link rel="stylesheet" href="/src/styles/theme.css" />
+</head>
+<body class="preloader-active">
+
+  <!-- Subtle Film Grain Overlay -->
+  <div class="film-grain" aria-hidden="true"></div>
+
+  <!-- Ambient Dynamic Glowing Mesh -->
+  <div class="ambient-glows" aria-hidden="true">
+    <div class="ambient-blob ambient-blob-1"></div>
+    <div class="ambient-blob ambient-blob-2"></div>
+    <div class="ambient-blob ambient-blob-3"></div>
+  </div>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress-line" id="scroll-progress" aria-hidden="true"></div>
+
+  <!-- Custom Interactive Cursor -->
+  <div class="custom-cursor-dot" aria-hidden="true"></div>
+  <div class="custom-cursor-ring" aria-hidden="true"></div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+  <!-- =========================================================================
+       1. CINEMATIC PRELOADER
+       ========================================================================= -->
+  <div class="preloader" id="preloader" aria-label="Loading VoltKart">
+    <div class="preloader-curtain-top"></div>
+    <div class="preloader-curtain-bottom"></div>
+    
+    <div class="preloader-content">
+      <svg class="preloader-logo-svg" viewBox="0 0 100 100" fill="none">
+        <defs>
+          <linearGradient id="preloaderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#3b82f6" />
+            <stop offset="50%" stop-color="#8b5cf6" />
+            <stop offset="100%" stop-color="#06b6d4" />
+          </linearGradient>
+        </defs>
+        <!-- Animated Drawing Logo Path -->
+        <path id="preloader-logo-path" class="preloader-logo-path" d="M 24 22 L 48 78 L 54 78 L 76 22 L 60 22 L 51 54 L 40 22 Z" />
+      </svg>
+      <div class="preloader-brand">VOLTKART</div>
+      <div class="preloader-progress-wrap">
+        <div class="preloader-progress-bar">
+          <div class="preloader-progress-fill" id="preloader-fill"></div>
+        </div>
+        <div class="preloader-counter" id="preloader-counter">0%</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       HEADER & NAVIGATION
+       ========================================================================= -->
+  <header class="site-header" id="header">
+    <div class="container nav-wrapper">
+      <!-- Brand Logo -->
+      <a href="#" class="logo" aria-label="VoltKart Home">
+        <svg class="logo-icon-svg" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="12" fill="url(#logoG)" />
+          <path d="M11 11 L19 29 L21 29 L29 11 L24 11 L20 22 L16 11 Z" fill="#ffffff" />
+          <defs>
+            <linearGradient id="logoG" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#3b82f6"/>
+              <stop offset="100%" stop-color="#06b6d4"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <span>Volt<span class="logo-highlight">Kart</span></span>
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="#hero" class="nav-link">Home</a></li>
+          <li><a href="#categories" class="nav-link">Categories</a></li>
+          <li><a href="#products" class="nav-link">Featured</a></li>
+          <li><a href="#showcase" class="nav-link">3D Showcase</a></li>
+          <li><a href="#check-setup" class="nav-link">Compatibility</a></li>
+        </ul>
+      </nav>
+
+      <!-- Nav Actions -->
+      <div class="nav-actions">
+        <!-- Search Trigger Button -->
+        <button class="action-btn" id="open-search-btn" title="Search Catalog (Press /)" aria-label="Search Catalog">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+        </button>
+
+        <!-- My Devices Setup Button -->
+        <button class="action-btn" id="open-my-devices-btn" title="My Hardware Setup" aria-label="My Devices Setup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2" ry="2"/>
+            <line x1="12" y1="18" x2="12.01" y2="18"/>
+          </svg>
+          <span class="action-badge" id="my-devices-badge" style="display:none;">0</span>
+        </button>
+
+        <!-- Wishlist Button -->
+        <button class="action-btn" id="open-wishlist-btn" title="Wishlist" aria-label="Open Wishlist">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+          <span class="action-badge" id="wishlist-badge" style="display:none;">0</span>
+        </button>
+
+        <!-- Cart Drawer Button -->
+        <button class="action-btn" id="open-cart-btn" title="Shopping Cart" aria-label="Open Shopping Cart">
+          <svg id="cart-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="action-badge" id="cart-badge">0</span>
+        </button>
+
+        <!-- Light/Dark Mode Circular Reveal Toggle -->
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Theme" aria-label="Toggle Light and Dark Mode">
+          <svg class="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Animated Hamburger Button (Mobile) -->
+        <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+          <span class="hamburger-line line-1"></span>
+          <span class="hamburger-line line-2"></span>
+          <span class="hamburger-line line-3"></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Mobile Fullscreen Menu -->
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay">
+    <a href="#hero" class="mobile-nav-link">Home</a>
+    <a href="#categories" class="mobile-nav-link">Categories</a>
+    <a href="#products" class="mobile-nav-link">Featured Products</a>
+    <a href="#showcase" class="mobile-nav-link">3D Showcase</a>
+    <a href="#check-setup" class="mobile-nav-link">Compatibility Checker</a>
+  </div>
+
+  <main>
+    <!-- =========================================================================
+         2. HERO SECTION WITH 3D THREE.JS GADGET
+         ========================================================================= -->
+    <section class="hero-section" id="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="hero-badge">
+            <span class="hero-badge-dot"></span>
+            <span>NEXT-GEN HARDWARE STORE</span>
+          </div>
+
+          <h1 class="hero-title" id="hero-headline">
+            Experience Future <br />
+            <span class="text-gradient">Performance.</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Curated flagship smartphones, M3 workstations, 144Hz OLEDs, and intelligent adapters that seamlessly sync with your exact digital ecosystem.
+          </p>
+
+          <div class="hero-ctas">
+            <a href="#products" class="btn-primary magnetic-btn" id="hero-shop-btn">
+              <span>Explore Products</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+
+            <button class="btn-secondary magnetic-btn" id="hero-check-setup-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+              <span>Check My Setup</span>
+            </button>
+          </div>
+
+          <div class="hero-features-strip">
+            <div class="hero-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <span>100% Guaranteed Compatibility</span>
+            </div>
+            <div class="hero-feature-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+              </svg>
+              <span>Ultra-Fast Same Day Dispatch</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-3d-stage" id="hero-canvas-container">
+          <div class="hero-spec-pill hero-spec-pill-1">
+            <span class="hero-spec-dot"></span>
+            <span>A18 Pro • 3nm Neural Engine</span>
+          </div>
+          <div class="hero-spec-pill hero-spec-pill-2">
+            <span class="hero-spec-dot"></span>
+            <span>Titanium Chassis • 10Gbps Type-C</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         3. CATEGORIES SECTION (Horizontal Gallery + 3D Tilt)
+         ========================================================================= -->
+    <section class="categories-section" id="categories">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">
+              <span>// 01 ARCHITECTURE</span>
+            </div>
+            <h2 class="section-title">Explore by Ecosystem</h2>
+          </div>
+          <p style="max-width: 400px; font-size: 0.9rem;">
+            Browse flagship categories engineered with high-bandwidth I/O, extreme refresh rates, and GaN fast power.
+          </p>
+        </div>
+
+        <div class="categories-track-container" id="categories-track-container">
+          <div class="categories-track" id="categories-track"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         4. FEATURED PRODUCTS SECTION (3D Tilt Cards, Flip Filter & Sort)
+         ========================================================================= -->
+    <section class="products-section" id="products">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <div class="section-tag">
+              <span>// 02 HARDWARE ROSTER</span>
+            </div>
+            <h2 class="section-title">Featured Innovations</h2>
+          </div>
+          <p style="max-width: 420px; font-size: 0.9rem;">
+            Precision engineered devices with live setup compatibility tags that adapt to what hardware you own.
+          </p>
+        </div>
+
+        <!-- Filter & Sorting Bar -->
+        <div class="filter-bar">
+          <div class="filter-pills" id="category-filter-pills"></div>
+          
+          <div class="filter-options">
+            <select class="sort-select" id="sort-select" aria-label="Sort products">
+              <option value="featured">Featured First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="rating">Highest Rated</option>
+            </select>
+          </div>
+
+          <!-- Advanced Filters: Brand, Price Slider, Rating -->
+          <div class="filter-controls-advanced">
+            <div class="filter-group">
+              <span class="filter-label">Brand:</span>
+              <select class="sort-select" id="brand-filter" aria-label="Filter by Brand">
+                <option value="all">All Brands</option>
+                <option value="Apple">Apple</option>
+                <option value="Samsung">Samsung</option>
+                <option value="Sony">Sony</option>
+                <option value="Dell">Dell</option>
+                <option value="ASUS">ASUS</option>
+                <option value="Google">Google</option>
+                <option value="OnePlus">OnePlus</option>
+                <option value="Nothing">Nothing</option>
+                <option value="Xiaomi">Xiaomi</option>
+                <option value="Bose">Bose</option>
+                <option value="Sennheiser">Sennheiser</option>
+                <option value="VoltKart">VoltKart Adapters</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Max Price:</span>
+              <div class="filter-slider-wrap">
+                <input type="range" id="price-slider" class="price-range-slider" min="20" max="2500" step="50" value="2500" />
+                <span class="price-slider-value" id="price-slider-val">$2500</span>
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <span class="filter-label">Min Rating:</span>
+              <select class="sort-select" id="rating-filter" aria-label="Filter by Rating">
+                <option value="0">All Ratings</option>
+                <option value="4.6">4.6+ Stars</option>
+                <option value="4.8">4.8+ Stars</option>
+                <option value="4.9">4.9 Reference</option>
+              </select>
+            </div>
+
+            <!-- "Compatible Only" Filter Toggle -->
+            <div class="filter-group">
+              <label class="compat-only-checkbox-label" title="Only display items compatible with your saved devices">
+                <input type="checkbox" id="compatible-only-toggle" class="compat-checkbox" />
+                <span class="compat-checkbox-custom"></span>
+                <span style="font-weight:600; color:var(--neon-emerald); cursor:pointer;">Compatible Only</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product Cards Grid (Smooth animated with GSAP Flip) -->
+        <div class="products-grid" id="products-grid"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         5. SCROLL-DRIVEN 3D SHOWCASE (Pinned 360° Orbit, Color Swap & Spec Lines)
+         ========================================================================= -->
+    <section class="showcase-section" id="showcase">
+      <div class="showcase-sticky-viewport">
+        <!-- Background Ambient Glow & Light Beam (Lower Z-Index Behind Laptop) -->
+        <div class="showcase-backdrop-glow"></div>
+        <div class="showcase-vertical-light-beam" aria-hidden="true"></div>
+
+        <div class="container showcase-content-overlay">
+          <div class="showcase-top-header">
+            <div class="section-tag">
+              <span>// 03 FLAGSHIP ARCHITECTURE</span>
+            </div>
+            <h2 class="showcase-headline">ApexBook Pro 16</h2>
+            <p class="showcase-sub">Scroll to orbit 360° and inspect thermal and hardware architecture.</p>
+
+            <!-- Colorway Selector Swatches -->
+            <div class="showcase-colorways">
+              <span class="showcase-colorway-label">Finish: <strong id="showcase-colorway-name">Space Titanium Alloy</strong></span>
+              <div class="showcase-color-dots">
+                <button class="showcase-color-dot active" data-hex="1e293b" data-name="Space Titanium Alloy" style="background:#334155;" title="Space Titanium"></button>
+                <button class="showcase-color-dot" data-hex="0284c7" data-name="Cyber Cyan Anodized" style="background:#0284c7;" title="Cyber Cyan"></button>
+                <button class="showcase-color-dot" data-hex="7c3aed" data-name="Quantum Purple Edition" style="background:#7c3aed;" title="Quantum Purple"></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spec Callout 1 (Display) -->
+          <div class="showcase-spec-callout showcase-callout-1">
+            <svg class="callout-line-svg" width="160" height="80">
+              <path id="callout-line-1" class="callout-path" d="M 0 70 L 90 70 L 150 10" />
+            </svg>
+            <div class="callout-card">
+              <span class="callout-tag">OPTICAL ENGINE</span>
+              <h4 class="callout-title">3.5K OLED 240Hz Pro</h4>
+              <p class="callout-desc">1,600 nits peak HDR brightness with 0.2ms pixel response and 100% DCI-P3 gamut.</p>
+            </div>
+          </div>
+
+          <!-- Spec Callout 2 (I/O Architecture) -->
+          <div class="showcase-spec-callout showcase-callout-2">
+            <svg class="callout-line-svg" width="160" height="80">
+              <path id="callout-line-2" class="callout-path" d="M 160 70 L 70 70 L 10 10" />
+            </svg>
+            <div class="callout-card">
+              <span class="callout-tag">UNLIMITED I/O</span>
+              <h4 class="callout-title">Triple Thunderbolt 4</h4>
+              <p class="callout-desc">Full 40Gbps per port, native HDMI 2.1 8K output, and high-speed SDXC UHS-II reader.</p>
+            </div>
+          </div>
+
+          <!-- Spec Callout 3 (Silicon & Cooling) -->
+          <div class="showcase-spec-callout showcase-callout-3">
+            <svg class="callout-line-svg" width="160" height="80">
+              <path id="callout-line-3" class="callout-path" d="M 0 10 L 90 10 L 150 70" />
+            </svg>
+            <div class="callout-card">
+              <span class="callout-tag">THERMAL MATRIX</span>
+              <h4 class="callout-title">Dual Vapor Chambers</h4>
+              <p class="callout-desc">Zero thermal throttling at 140W sustained load with whisper-quiet levitation fans.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Three.js Canvas Container -->
+        <div class="showcase-canvas-container" id="showcase-canvas-container"></div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         6. "CHECK YOUR SETUP" HIGHLIGHT SECTION
+         ========================================================================= -->
+    <section class="check-setup-section" id="check-setup">
+      <div class="container">
+        <div class="check-setup-card">
+          <div class="setup-scanline-ambient" id="home-scanline"></div>
+          <div class="check-setup-content">
+            <div class="section-tag">
+              <span>// 04 ECOSYSTEM INTELLIGENCE</span>
+            </div>
+            <h2 class="check-setup-title">Will It Work With My Setup?</h2>
+            <p class="check-setup-desc">
+              Never buy the wrong wattage plug or incompatible cable again. Tell VoltKart what phone, laptop, or TV you own — or type in plain English — and our rule engine evaluates every port, wattage, and protocol.
+            </p>
+
+            <div class="check-setup-demo-bar">
+              <input 
+                type="text" 
+                class="check-setup-demo-input" 
+                id="home-plain-input" 
+                placeholder="Try: 'I have a Samsung A54 and a laptop with only USB-C ports'" 
+                value="I have a Samsung A54 and a laptop with only USB-C ports"
+              />
+              <button class="btn-primary check-setup-demo-btn" id="home-analyze-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span>Analyze Setup</span>
+              </button>
+            </div>
+
+            <div class="check-setup-results-wrap" id="home-chips-preview"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         7. DEAL OF THE DAY (Flip Countdown Timer + Progress Bar)
+         ========================================================================= -->
+    <section class="deal-section" id="deal-of-the-day">
+      <div class="container">
+        <div class="deal-card">
+          <div class="deal-grid">
+            <div class="deal-info-col">
+              <div class="section-tag">
+                <span>// 05 FLASH OPPORTUNITY</span>
+              </div>
+              <h2 class="deal-title">Deal of the Day</h2>
+              <p class="deal-subtitle">Flagship Volt Titan 16 Pro Max with aerospace titanium frame, 48MP camera, and 30W USB-C fast charging.</p>
+
+              <!-- 3D Flip Countdown Timer -->
+              <div class="deal-timer-container" id="deal-timer-container">
+                <div class="flip-unit">
+                  <div class="flip-card-face" id="deal-flip-hours">08</div>
+                  <span class="flip-label">Hours</span>
+                </div>
+                <span class="flip-separator">:</span>
+                <div class="flip-unit">
+                  <div class="flip-card-face" id="deal-flip-mins">42</div>
+                  <span class="flip-label">Minutes</span>
+                </div>
+                <span class="flip-separator">:</span>
+                <div class="flip-unit">
+                  <div class="flip-card-face" id="deal-flip-secs">19</div>
+                  <span class="flip-label">Seconds</span>
+                </div>
+              </div>
+
+              <!-- Animated Progress Bar -->
+              <div class="deal-progress-wrapper">
+                <div class="deal-progress-labels">
+                  <span>⚡ 78% Claimed</span>
+                  <span>Only 14 Units Left!</span>
+                </div>
+                <div class="deal-progress-track">
+                  <div class="deal-progress-fill" id="deal-progress-fill"></div>
+                </div>
+              </div>
+
+              <!-- Price & CTA -->
+              <div class="deal-price-row">
+                <div class="deal-prices">
+                  <span class="deal-price-now">$1,199</span>
+                  <span class="deal-price-was">$1,299</span>
+                  <span class="deal-save-badge">SAVE $100 TODAY</span>
+                </div>
+                <button class="btn-primary deal-claim-btn" id="deal-claim-btn">
+                  <span>Claim Flash Deal</span>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <div class="deal-media-col">
+              <div class="deal-img-halo"></div>
+              <img src="/images/products/phone-titan.svg" alt="Volt Titan 16 Pro Max Deal" class="deal-product-img" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         8. STATS COUNTERS (Count Up on Scroll)
+         ========================================================================= -->
+    <section class="stats-section" id="stats-section">
+      <div class="container stats-grid">
+        <div class="stat-card">
+          <div class="stat-number" id="stat-customers">0</div>
+          <div class="stat-label">Happy Tech Customers</div>
+          <div class="stat-desc">Active users building synchronized setups worldwide</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number" id="stat-products">0</div>
+          <div class="stat-label">Curated Innovations</div>
+          <div class="stat-desc">High-bandwidth 4K OLEDs, M3 beasts, GaN chargers</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number" id="stat-cities">0</div>
+          <div class="stat-label">Device Profiles</div>
+          <div class="stat-desc">Phones, laptops, and TV HDMI specs catalogued</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-number" id="stat-synergy">0%</div>
+          <div class="stat-label">Synergy Match Rate</div>
+          <div class="stat-desc">Guaranteed zero port mismatch or return rate</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         9. BRAND LOGO MARQUEE & TESTIMONIALS SLIDER
+         ========================================================================= -->
+    <section class="testimonials-section" id="testimonials">
+      <div class="container">
+        <div class="section-header" style="text-align: center; align-items: center;">
+          <div class="section-tag">
+            <span>// 06 VERIFIED ECOSYSTEM PARTNERS</span>
+          </div>
+          <h2 class="section-title">Built for the World's Leading Standards</h2>
+          <p style="max-width: 520px; margin: 0 auto; font-size: 0.95rem;">
+            Certified compatibility with high-performance protocols from industry leaders.
+          </p>
+        </div>
+
+        <!-- Infinite Brand Logo Marquee -->
+        <div class="marquee-wrapper">
+          <div class="marquee-track">
+            <span class="marquee-item">APPLE</span>
+            <span class="marquee-item">SAMSUNG</span>
+            <span class="marquee-item">SONY BRAVIA</span>
+            <span class="marquee-item">DELL XPS</span>
+            <span class="marquee-item">ASUS ROG</span>
+            <span class="marquee-item">GOOGLE PIXEL</span>
+            <span class="marquee-item">ONEPLUS</span>
+            <span class="marquee-item">NOTHING</span>
+            <span class="marquee-item">BOSE ULTRA</span>
+            <span class="marquee-item">SENNHEISER</span>
+            <span class="marquee-item">THUNDERBOLT 4</span>
+            <span class="marquee-item">HDMI 2.1</span>
+            <!-- Duplicate for infinite loop -->
+            <span class="marquee-item">APPLE</span>
+            <span class="marquee-item">SAMSUNG</span>
+            <span class="marquee-item">SONY BRAVIA</span>
+            <span class="marquee-item">DELL XPS</span>
+            <span class="marquee-item">ASUS ROG</span>
+            <span class="marquee-item">GOOGLE PIXEL</span>
+            <span class="marquee-item">ONEPLUS</span>
+            <span class="marquee-item">NOTHING</span>
+            <span class="marquee-item">BOSE ULTRA</span>
+            <span class="marquee-item">SENNHEISER</span>
+            <span class="marquee-item">THUNDERBOLT 4</span>
+            <span class="marquee-item">HDMI 2.1</span>
+          </div>
+        </div>
+
+        <!-- Testimonials Cards Grid -->
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"VoltKart saved me from buying the wrong HDMI cable for my LG C3 OLED and PS5. The setup checker immediately flagged that I needed an HDMI 2.1 48Gbps cable for 4K 120Hz gaming!"</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:#3b82f6;">AL</div>
+              <div>
+                <div class="author-name">Alexandre Laurent</div>
+                <div class="author-meta">Verified Hardware Enthusiast • MacBook & OLED</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"I typed 'I have a Samsung A54 and a 2019 MacBook' into the box, and it immediately showed me exactly which 25W GaN charger gave me full speed without overheating. Incredible engineering."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:#8b5cf6;">SK</div>
+              <div>
+                <div class="author-name">Sophia Kim</div>
+                <div class="author-meta">Mobile Software Architect • Galaxy Ecosystem</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="testimonial-card">
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-text">"The 3D showcase and compare tools are mindblowing. Being able to compare 3 flagship laptops side by side with the best value highlight made my purchase decision instantaneous."</p>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background:#06b6d4;">MR</div>
+              <div>
+                <div class="author-name">Marcus Reynolds</div>
+                <div class="author-meta">Creative Director & Studio Lead</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================================
+         10. RECENTLY VIEWED PRODUCTS SECTION
+         ========================================================================= -->
+    <section class="recently-viewed-section" id="recently-viewed-section" style="display:none;">
+      <div class="container">
+        <div class="section-header" style="margin-bottom: var(--space-3);">
+          <div>
+            <div class="section-tag">
+              <span>// RECENT HISTORY</span>
+            </div>
+            <h3 style="font-size: 1.4rem; font-weight:700;">Recently Viewed Gear</h3>
+          </div>
+        </div>
+        <div class="recent-grid" id="recently-viewed-grid"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- =========================================================================
+       11. SITE FOOTER WITH NEWSLETTER SIGNUP
+       ========================================================================= -->
+  <footer class="site-footer" id="site-footer">
+    <div class="container footer-top">
+      <div class="footer-grid">
+        <div class="footer-brand-col">
+          <div class="footer-logo">
+            <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+              <polygon points="18 2 5 18 15 18 14 30 27 14 17 14 18 2" fill="url(#footer-logo-grad)" />
+              <defs>
+                <linearGradient id="footer-logo-grad" x1="5" y1="2" x2="27" y2="30" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#38bdf8" />
+                  <stop offset="0.5" stop-color="#818cf8" />
+                  <stop offset="1" stop-color="#c084fc" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span class="logo-text">Volt<span class="text-accent">Kart</span></span>
+          </div>
+          <p class="footer-desc">
+            Awwwards-level next-generation electronics store. Engineered with live hardware ecosystem compatibility, 3D interactive hardware showcases, and ultra-fast GaN power synchronization.
+          </p>
+          <div class="footer-socials">
+            <a href="#" class="social-icon" aria-label="Twitter / X">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+            <a href="#" class="social-icon" aria-label="GitHub">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+            </a>
+            <a href="#" class="social-icon" aria-label="YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Hardware Ecosystem</h4>
+          <ul class="footer-links-list">
+            <li><a href="#products">Flagship Mobiles</a></li>
+            <li><a href="#products">Creator Laptops</a></li>
+            <li><a href="#products">4K OLED & Mini-LED TVs</a></li>
+            <li><a href="#products">Studio Headphones</a></li>
+            <li><a href="#products">GaN Chargers & Docks</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-links-col">
+          <h4 class="footer-col-title">Setup Intelligence</h4>
+          <ul class="footer-links-list">
+            <li><a href="#check-setup">Will It Work With My Setup?</a></li>
+            <li><a href="#showcase">3D Hardware Architecture</a></li>
+            <li><a href="#" id="footer-my-devices-btn">My Devices Profile</a></li>
+            <li><a href="#deal-of-the-day">Deal of the Day</a></li>
+            <li><a href="#stats-section">Ecosystem Metrics</a></li>
+          </ul>
+        </div>
+
+        <!-- Newsletter Signup Column -->
+        <div class="footer-newsletter-col">
+          <h4 class="footer-col-title">VoltKart Tech Insider</h4>
+          <p class="footer-newsletter-desc">Subscribe to receive first access to flagship drops, firmware updates, and flash deals.</p>
+          <form class="newsletter-form" id="newsletter-form">
+            <div class="newsletter-input-group">
+              <input 
+                type="email" 
+                class="newsletter-input" 
+                id="newsletter-input" 
+                placeholder="Enter your email address" 
+                required 
+              />
+              <button type="submit" class="newsletter-submit-btn" id="newsletter-submit-btn">
+                <span>Subscribe</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </button>
+            </div>
+            <span class="newsletter-guarantee">No spam. One-click unsubscribe anytime.</span>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Bottom Strip -->
+    <div class="footer-bottom">
+      <div class="container footer-bottom-inner">
+        <p class="footer-copy">© 2026 VoltKart Technologies Inc. Engineered with Three.js, GSAP & Precision Compatibility Engine.</p>
+        <div class="footer-badges">
+          <span class="footer-badge">USB-IF Verified</span>
+          <span class="footer-badge">HDMI 2.1 Ultra Certified</span>
+          <span class="footer-badge">GaNFast Inside</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       CART DRAWER
+       ========================================================================= -->
+  <div class="drawer-backdrop" id="cart-backdrop"></div>
+  <aside class="slide-drawer" id="cart-drawer" aria-label="Shopping Cart" data-lenis-prevent="true">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span>Your Shopping Bag</span>
+      </div>
+      <button class="drawer-close-btn" id="cart-close-btn" aria-label="Close Cart">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body" data-lenis-prevent="true">
+      <!-- Free Shipping Meter -->
+      <div class="shipping-progress-banner">
+        <div class="shipping-progress-text" id="shipping-progress-text">Add $500 more for FREE express shipping</div>
+        <div class="shipping-progress-track">
+          <div class="shipping-progress-fill" id="shipping-progress-fill"></div>
+        </div>
+      </div>
+
+      <!-- Items List -->
+      <div class="cart-items-list" id="cart-items-list"></div>
+
+      <!-- Empty State -->
+      <div class="drawer-empty-state" id="cart-empty-state" style="display:none;">
+        <div class="drawer-empty-icon">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <h4 class="drawer-empty-title">Your Cart is Empty</h4>
+        <p class="drawer-empty-desc">Discover precision electronics, flagships, and adapters engineered for your setup.</p>
+        <a href="#products" class="btn-primary" onclick="document.getElementById('cart-close-btn').click();" style="margin-top:10px;">
+          <span>Explore Catalog</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Cart Footer with Animated Rolling Totals -->
+    <div class="cart-footer" id="cart-footer">
+      <div class="coupon-row">
+        <input type="text" class="coupon-input" id="coupon-input" placeholder="Coupon Code (VOLT10)" maxlength="12" />
+        <button class="coupon-btn" id="apply-coupon-btn">Apply</button>
+      </div>
+      <div class="coupon-msg" id="coupon-msg"></div>
+
+      <div class="cart-summary-table">
+        <div class="cart-summary-row">
+          <span>Subtotal</span>
+          <span id="cart-subtotal" data-value="0">$0</span>
+        </div>
+        <div class="cart-summary-row" id="cart-discount-row" style="display:none; color:var(--neon-emerald);">
+          <span>Promo Discount</span>
+          <span id="cart-discount-val">-$0</span>
+        </div>
+        <div class="cart-summary-row total-row">
+          <span>Estimated Total</span>
+          <span id="cart-total" data-value="0">$0</span>
+        </div>
+      </div>
+
+      <button class="btn-primary checkout-btn" id="cart-checkout-btn">
+        <span>Proceed to Secure Checkout</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       WISHLIST DRAWER
+       ========================================================================= -->
+  <div class="drawer-backdrop" id="wishlist-backdrop"></div>
+  <aside class="slide-drawer" id="wishlist-drawer" aria-label="Wishlist" data-lenis-prevent="true">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>Saved Hardware Wishlist</span>
+      </div>
+      <button class="drawer-close-btn" id="wishlist-close-btn" aria-label="Close Wishlist">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body" data-lenis-prevent="true">
+      <div class="wishlist-items-list" id="wishlist-items-list"></div>
+
+      <div class="drawer-empty-state" id="wishlist-empty-state" style="display:none;">
+        <div class="drawer-empty-icon" style="background:rgba(244,63,94,0.1); color:#f43f5e;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h4 class="drawer-empty-title">Wishlist is Empty</h4>
+        <p class="drawer-empty-desc">Click the heart icon on any product to save it for later review.</p>
+        <a href="#products" class="btn-primary" onclick="document.getElementById('wishlist-close-btn').click();" style="margin-top:10px;">
+          <span>Explore Products</span>
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       MY DEVICES SLIDE-IN PANEL
+       ========================================================================= -->
+  <div class="drawer-backdrop" id="my-devices-backdrop"></div>
+  <aside class="slide-drawer" id="my-devices-drawer" aria-label="My Hardware Setup" data-lenis-prevent="true">
+    <div class="drawer-header">
+      <div class="drawer-title">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>My Hardware Ecosystem</span>
+      </div>
+      <button class="drawer-close-btn" id="my-devices-close-btn" aria-label="Close My Devices">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <!-- Scanline effect -->
+    <div class="device-scanline" id="device-scanline"></div>
+
+    <div class="drawer-body" data-lenis-prevent="true">
+      <!-- Plain-English NLP Section inside drawer -->
+      <div class="devices-nlp-card">
+        <div class="nlp-card-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <strong>Plain-English Smart Match</strong>
+        </div>
+        <p class="nlp-card-desc">Type what you own — our NLP parser extracts fast-charge wattage and exact ports automatically:</p>
+        <div class="nlp-input-row">
+          <input 
+            type="text" 
+            class="nlp-text-input" 
+            id="plain-english-input" 
+            placeholder="e.g. 'I have a Samsung A54 and a 2019 laptop with only USB-C ports'"
+          />
+          <button class="btn-primary nlp-analyze-btn" id="analyze-plain-btn">
+            <span>Parse</span>
+          </button>
+        </div>
+
+        <!-- "Did we get this right?" confirmation card with editable chips -->
+        <div class="did-we-get-right-card" id="did-we-get-right-card" style="display:none;">
+          <div class="did-we-title">Did we get this right?</div>
+          <div class="detected-chips" id="detected-chips-container"></div>
+          <button class="btn-primary" id="apply-detected-setup-btn" style="width:100%; padding:10px; font-size:0.85rem; margin-top:8px;">
+            <span>Looks Great! Save Setup</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Manual Dropdown Pickers -->
+      <div class="devices-select-group">
+        <label class="device-select-label">
+          <span>Primary Smartphone</span>
+          <span class="device-spec-tag">Fast-Charge Wattage & Port</span>
+        </label>
+        <select class="sort-select device-picker" id="setup-phone-select" aria-label="Select Phone"></select>
+      </div>
+
+      <div class="devices-select-group">
+        <label class="device-select-label">
+          <span>Primary Laptop / Workstation</span>
+          <span class="device-spec-tag">Exact I/O & HDMI Specs</span>
+        </label>
+        <select class="sort-select device-picker" id="setup-laptop-select" aria-label="Select Laptop"></select>
+      </div>
+
+      <div class="devices-select-group">
+        <label class="device-select-label">
+          <span>Primary TV / Display</span>
+          <span class="device-spec-tag">HDMI Bandwidth & Refresh</span>
+        </label>
+        <select class="sort-select device-picker" id="setup-tv-select" aria-label="Select TV"></select>
+      </div>
+
+      <!-- Setup Summary Card -->
+      <div class="setup-live-card">
+        <div class="setup-live-title">
+          <span class="setup-live-dot"></span>
+          <span>Live Compatibility System Active</span>
+        </div>
+        <p class="setup-live-text">
+          Every product card in the catalog now dynamically evaluates against your saved hardware specs.
+        </p>
+      </div>
+    </div>
+
+    <div class="cart-footer">
+      <button class="btn-secondary" id="share-setup-btn" style="width:100%; gap:8px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        <span>Share My Hardware Setup Link</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- =========================================================================
+       SMART SEARCH OVERLAY MODAL
+       ========================================================================= -->
+  <div class="search-overlay" id="search-overlay" aria-modal="true" role="dialog">
+    <div class="search-modal-box" data-lenis-prevent="true">
+      <div class="search-input-header">
+        <svg class="search-icon-decor" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" class="search-input-field" id="search-input" placeholder="Search devices, 4K OLEDs, 100W GaN, M3 Max..." autocomplete="off" />
+        <button class="search-clear-btn" id="search-clear-btn" aria-label="Clear Search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <span class="search-close-key">ESC</span>
+      </div>
+
+      <!-- Quick Search Filter Tags -->
+      <div class="search-quick-tags">
+        <span class="search-quick-label">Trending:</span>
+        <button class="search-quick-tag" data-tag="OLED">OLED 4K</button>
+        <button class="search-quick-tag" data-tag="GaN">GaN 65W</button>
+        <button class="search-quick-tag" data-tag="HDMI 2.1">HDMI 2.1</button>
+        <button class="search-quick-tag" data-tag="Titanium">Titanium</button>
+        <button class="search-quick-tag" data-tag="M3 Max">M3 Max</button>
+        <button class="search-quick-tag" data-tag="Hub">USB-C Hub</button>
+      </div>
+
+      <div class="search-results-area" data-lenis-prevent="true">
+        <div class="search-results-count" id="search-results-count">Type to search 26 flagship items</div>
+        <div id="search-results" data-lenis-prevent="true"></div>
+
+        <div class="search-empty-state" id="search-empty-state" style="display:none;">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="var(--neon-rose)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          <h4 style="font-size:1.15rem; font-weight:700;">No matching hardware found</h4>
+          <p style="font-size:0.85rem; color:var(--text-muted);">We couldn't find any results for <span id="search-empty-term"></span>. Try searching by brand, port type, or category.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       QUICK VIEW MODAL & SPECS TABLE
+       ========================================================================= -->
+  <div class="quickview-overlay" id="quickview-modal" aria-modal="true" role="dialog">
+    <div class="quickview-box" data-lenis-prevent="true">
+      <button class="quickview-close-btn" id="quickview-close-btn" aria-label="Close modal">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <div id="quickview-content" data-lenis-prevent="true"></div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       PRODUCT COMPARISON DOCK & MODAL
+       ========================================================================= -->
+  <div class="compare-dock" id="compare-dock">
+    <div class="compare-dock-inner">
+      <div class="compare-dock-info">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2.2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span class="compare-dock-title">Compare Specs</span>
+        <span class="compare-dock-count" id="compare-dock-count">(0/3)</span>
+      </div>
+      <div class="compare-dock-thumbs" id="compare-dock-thumbs"></div>
+      <div class="compare-dock-actions">
+        <button class="btn-primary compare-open-btn" id="compare-open-btn">
+          <span>Compare Now</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        <button class="compare-clear-btn" id="compare-clear-btn" title="Clear all">Clear</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="compare-modal" id="compare-modal" aria-modal="true" role="dialog">
+    <div class="compare-modal-box" data-lenis-prevent="true">
+      <div class="compare-modal-header">
+        <div class="compare-modal-title-wrap">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <h3 class="compare-modal-title">Hardware Specification Comparison</h3>
+        </div>
+        <button class="compare-modal-close" id="compare-modal-close" aria-label="Close comparison">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="compare-matrix-container" id="compare-matrix-container" data-lenis-prevent="true"></div>
+    </div>
+  </div>
+
+  <!-- SVG Filters for Liquid/Ripple Distortion -->
+  <svg style="position: absolute; width: 0; height: 0; pointer-events: none;" aria-hidden="true">
+    <defs>
+      <filter id="liquid-filter" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence type="fractalNoise" id="liquid-turb" baseFrequency="0.04 0.04" numOctaves="2" result="noise" />
+        <feDisplacementMap in="SourceGraphic" in2="noise" id="liquid-disp" scale="0" xChannelSelector="R" yChannelSelector="G" />
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Back to Top Rocket Button with Flame Trail -->
+  <button class="rocket-btn" id="rocket-btn" aria-label="Back to Top" title="Back to Top">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+      <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+      <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+      <path d="M12 9V4s3.03.55 4 2c1.08 1.62 0 5 0 5"></path>
+    </svg>
+    <span class="rocket-flame" aria-hidden="true"></span>
+  </button>
+
+  <!-- Main JavaScript App Entry -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

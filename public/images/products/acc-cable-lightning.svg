@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <radialGradient id="lightGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0a0d18" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="metalLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#374151"/>
+      <stop offset="50%" stop-color="#1f2937"/>
+      <stop offset="100%" stop-color="#111827"/>
+    </linearGradient>
+  </defs>
+
+  <circle cx="250" cy="250" r="230" fill="url(#lightGlow)"/>
+
+  <!-- Central Device Icon Box -->
+  <rect x="140" y="140" width="220" height="220" rx="24" fill="url(#metalLight)" stroke="#a855f7" stroke-width="2.5" stroke-opacity="0.7"/>
+
+  <!-- Tech details inside -->
+  <rect x="160" y="160" width="180" height="180" rx="16" fill="#090d16" opacity="0.8"/>
+  <path d="M250 205 L235 235 L252 235 L245 260 L268 225 L250 225 Z" fill="#a855f7" stroke="#e9d5ff" stroke-width="1.5"/>
+
+  <!-- Text -->
+  <text x="250" y="295" fill="#f8fafc" font-family="'Space Grotesk', sans-serif" font-weight="700" font-size="12" text-anchor="middle" letter-spacing="2">VOLTKART</text>
+  <text x="250" y="318" fill="#c084fc" font-family="'Poppins', sans-serif" font-size="11" text-anchor="middle" font-weight="600">MFI TYPE-C TO LIGHTNING</text>
+
+  <!-- Connector on edge -->
+  <rect x="238" y="115" width="24" height="25" rx="3" fill="#e2e8f0" stroke="#64748b" stroke-width="1"/>
+  <line x1="242" y1="120" x2="258" y2="120" stroke="#f59e0b" stroke-width="2"/>
+</svg>
