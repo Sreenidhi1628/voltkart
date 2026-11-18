@@ -1,4 +1,4 @@
-import { phones, laptops, tvs } from '../data/devices.js';
+import { phones, laptops, tvs, tablets } from '../data/devices.js';
 import { products } from '../data/products.js';
 
 // Default / fallback user hardware profile
@@ -85,16 +85,23 @@ export class CompatibilityEngine {
       tv = tvs.find(t => t.id === this.userSetup.tvId) || null;
     }
 
+    let tablet = null;
+    if (this.userSetup.customDevices?.tablet) {
+      tablet = this.userSetup.customDevices.tablet;
+    } else if (this.userSetup.tabletId) {
+      tablet = tablets.find(t => t.id === this.userSetup.tabletId) || null;
+    }
+
     const audio = this.userSetup.customDevices?.audio || null;
 
     // Default fallback ONLY when no custom/analyzed setup exists and no IDs are set
-    if (!phone && !laptop && !tv && !audio && !this.userSetup.isAnalyzedSetup) {
+    if (!phone && !laptop && !tv && !tablet && !audio && !this.userSetup.isAnalyzedSetup) {
       phone = phones.find(p => p.id === DEFAULT_USER_SETUP.phoneId) || phones[0];
       laptop = laptops.find(l => l.id === DEFAULT_USER_SETUP.laptopId) || laptops[0];
       tv = tvs.find(t => t.id === DEFAULT_USER_SETUP.tvId) || tvs[0];
     }
 
-    return { phone, laptop, tv, audio };
+    return { phone, laptop, tv, tablet, audio };
   }
 
   /**
@@ -424,14 +431,17 @@ export class CompatibilityEngine {
     if (!text || typeof text !== 'string') return null;
 
     const lower = text.toLowerCase().replace(/[-_]/g, ' ');
+    const hasSolutionIntent = /\b(?:suggest|recommend|recommendation|chargers?|cables?|solution|bundle|accessories)\b/i.test(lower);
     const detected = {
       phone: null,
       laptop: null,
       tv: null,
+      tablet: null,
       audio: null,
       rawTokens: [],
       items: [],
-      suggestions: []
+      suggestions: [],
+      openSolution: hasSolutionIntent
     };
 
     // 1. Spec extraction
@@ -533,7 +543,7 @@ export class CompatibilityEngine {
     let laptopSuggestions = [];
 
     const hasAppleLaptop = /\b(?:apple\s*)?(macbook|mac\s*book)\b/i.test(lower);
-    const hasDellXps = /\b(dell\s*xps|xps)\b/i.test(lower);
+    const hasDell = /\b(?:dell\s*xps|dell|xps)\b/i.test(lower);
     const hasAsusRog = /\b(asus|rog|zephyrus)\b/i.test(lower);
     const hasLenovoThinkpad = /\b(lenovo|thinkpad|think\s*pad)\b/i.test(lower);
     const hasHp = /\b(hp|spectre|pavilion)\b/i.test(lower);
@@ -567,7 +577,7 @@ export class CompatibilityEngine {
           { id: 'laptop-macbook-pro-16-m3', label: 'MacBook Pro 16"' }
         ];
       }
-    } else if (hasDellXps) {
+    } else if (hasDell) {
       if (/\b(?:13|13\s*inch|13"|plus)\b/i.test(lower)) {
         detected.laptop = laptops.find(l => l.id === 'laptop-dell-xps-13');
         laptopSuggestions = [
@@ -694,8 +704,70 @@ export class CompatibilityEngine {
       if (detectedBt) detected.tv.bluetoothVersion = detectedBt;
     }
 
-    // 5. Generic Audio / Headphones Detection
-    if (/\b(?:a\s+)?(?:headphones?|earphones?|earbuds?|headset|audio)\b/i.test(lower) && !detected.phone && !detected.laptop && !detected.tv) {
+    // 5. Tablet Detection
+    let tabletSuggestions = [];
+    if (/\b(?:apple\s*)?ipad\b/i.test(lower)) {
+      if (/\b(?:pro\s*13|pro\s*m4|pro)\b/i.test(lower)) {
+        detected.tablet = tablets.find(t => t.id === 'tablet-apple-ipad-pro-m4') || tablets[2];
+        tabletSuggestions = [
+          { id: 'tablet-apple-ipad-pro-m4', label: 'iPad Pro 13" (M4)' },
+          { id: 'tablet-apple-ipad-air-m2', label: 'iPad Air 11" (M2)' }
+        ];
+      } else if (/\bair\b/i.test(lower)) {
+        detected.tablet = tablets.find(t => t.id === 'tablet-apple-ipad-air-m2') || tablets[1];
+        tabletSuggestions = [
+          { id: 'tablet-apple-ipad-air-m2', label: 'iPad Air 11" (M2)' },
+          { id: 'tablet-apple-ipad-10', label: 'iPad (10th Gen)' }
+        ];
+      } else if (/\bmini\b/i.test(lower)) {
+        detected.tablet = tablets.find(t => t.id === 'tablet-apple-ipad-mini-6') || tablets[3];
+      } else {
+        // Base iPad (10th Gen)
+        detected.tablet = tablets.find(t => t.id === 'tablet-apple-ipad-10') || tablets[0];
+        tabletSuggestions = [
+          { id: 'tablet-apple-ipad-10', label: 'iPad (10th Gen)' },
+          { id: 'tablet-apple-ipad-air-m2', label: 'iPad Air 11" (M2)' }
+        ];
+      }
+    } else if (/(galaxy\s*tab\s*s\s*9|tab\s*s\s*9)/i.test(lower)) {
+      detected.tablet = tablets.find(t => t.id === 'tablet-samsung-galaxy-tab-s9') || tablets[4];
+    } else if (/(galaxy\s*tab\s*a\s*9|tab\s*a\s*9)/i.test(lower)) {
+      detected.tablet = tablets.find(t => t.id === 'tablet-samsung-galaxy-tab-a9') || tablets[5];
+    } else if (/(galaxy\s*tab|samsung\s*tab)/i.test(lower)) {
+      detected.tablet = tablets.find(t => t.id === 'tablet-samsung-galaxy-tab-s9') || tablets[4];
+      tabletSuggestions = [
+        { id: 'tablet-samsung-galaxy-tab-s9', label: 'Galaxy Tab S9' },
+        { id: 'tablet-samsung-galaxy-tab-a9', label: 'Galaxy Tab A9' }
+      ];
+    } else if (/\b(?:a\s+)?(?:tablets?|pad)\b/i.test(lower)) {
+      // Generic Tablet!
+      detected.tablet = {
+        id: 'tablet-generic',
+        name: 'Tablet (generic)',
+        brand: 'Generic',
+        portType: 'USB-C',
+        fastChargeWattage: detectedWattage || 25,
+        chargingStandards: ['PD 3.0'],
+        audioJack: hasJack ? true : (hasNoJack ? false : false),
+        bluetoothVersion: detectedBt || '5.3',
+        releaseYear: 2023,
+        isGeneric: true
+      };
+    }
+
+    if (detected.tablet) {
+      if (detectedWattage) detected.tablet.fastChargeWattage = detectedWattage;
+      if (detectedBt) detected.tablet.bluetoothVersion = detectedBt;
+      if (hasNoJack) detected.tablet.audioJack = false;
+      if (hasJack) detected.tablet.audioJack = true;
+    }
+
+    if (tabletSuggestions.length > 0 && (!detected.suggestions || detected.suggestions.length === 0)) {
+      detected.suggestions = tabletSuggestions;
+    }
+
+    // 6. Generic Audio / Headphones Detection
+    if (/\b(?:a\s+)?(?:headphones?|earphones?|earbuds?|headset|audio)\b/i.test(lower) && !detected.phone && !detected.laptop && !detected.tv && !detected.tablet) {
       detected.audio = {
         id: 'audio-generic',
         name: 'Headphones (generic)',
@@ -721,6 +793,13 @@ export class CompatibilityEngine {
         type: 'laptop',
         id: detected.laptop.id,
         label: detected.laptop.isGeneric ? detected.laptop.name : `Laptop: ${detected.laptop.name.replace('Apple ', '')}`
+      });
+    }
+    if (detected.tablet) {
+      detected.items.push({
+        type: 'tablet',
+        id: detected.tablet.id,
+        label: detected.tablet.isGeneric ? 'Tablet (generic)' : `Tablet: ${detected.tablet.name.replace('Apple ', '')}`
       });
     }
     if (detected.tv) {
@@ -825,10 +904,10 @@ export class CompatibilityEngine {
    */
   getRecommendedSolution() {
     const devices = this.getUserDevices();
-    const { phone, laptop, tv, audio } = devices;
+    const { phone, laptop, tv, tablet, audio } = devices;
 
     // Check if any device exists
-    const hasAnyDevice = !!(phone || laptop || tv || audio);
+    const hasAnyDevice = !!(phone || laptop || tv || tablet || audio);
     if (!hasAnyDevice) {
       return null;
     }
@@ -902,6 +981,30 @@ export class CompatibilityEngine {
       });
     }
 
+    if (tablet) {
+      const isBtLimited = tablet.bluetoothVersion && parseFloat(tablet.bluetoothVersion) < 5.0;
+      let status = 'green';
+      let label = 'Compatible';
+      let badgeClass = 'status-green';
+      let note = `Full ${tablet.fastChargeWattage || 25}W ${tablet.portType || 'USB-C'} fast-charging supported.`;
+
+      if (isBtLimited) {
+        status = 'blue';
+        label = 'Compatible with limitations';
+        badgeClass = 'status-blue';
+        note = `Bluetooth ${tablet.bluetoothVersion} audio caps wireless range & advanced codec bandwidth.`;
+      }
+
+      deviceStatuses.push({
+        deviceType: 'tablet',
+        name: tablet.name,
+        status,
+        label,
+        badgeClass,
+        note
+      });
+    }
+
     if (tv) {
       const isHdmi20 = tv.maxHdmiVersion === '2.0';
       let status = 'green';
@@ -944,22 +1047,29 @@ export class CompatibilityEngine {
 
     const phoneW = phone ? (phone.fastChargeWattage || 20) : 0;
     const laptopW = laptop ? (laptop.chargingWattage || 65) : 0;
-    const combinedW = phoneW + laptopW;
+    const tabletW = tablet ? (tablet.fastChargeWattage || 25) : 0;
+    const combinedW = phoneW + laptopW + tabletW;
+
+    const chargeDevices = [laptop, tablet, phone].filter(Boolean);
+    isMultiDevice = chargeDevices.length > 1;
 
     // Charger selection
     let chargerProduct = null;
     let recommendedWattageText = '';
 
-    if (phone && laptop) {
-      isMultiDevice = true;
-      if (combinedW > 65 || laptopW >= 65) {
+    if (isMultiDevice) {
+      if (combinedW > 65 || laptopW >= 65 || chargeDevices.length >= 3) {
         chargerProduct = products.find(p => p.id === 'prod-acc-3'); // 100W GaN Pro Multi-Port
-        recommendedWattageText = `100W GaN III (Powers ${laptop.name} @ 65W/100W + ${phone.name} @ 25W/30W simultaneously)`;
-        smartNote = `Smart Multi-Port GaN replaces separate chargers! Charges both your ${laptop.name} and ${phone.name} from a single outlet at peak speeds.`;
+        const devicePowers = [];
+        if (laptop) devicePowers.push(`${laptop.name} @ 65W/100W`);
+        if (tablet) devicePowers.push(`${tablet.name} @ 20W/30W`);
+        if (phone) devicePowers.push(`${phone.name} @ 25W`);
+        recommendedWattageText = `100W GaN III (Powers ${devicePowers.join(' + ')} simultaneously)`;
+        smartNote = `Smart Multi-Port GaN replaces separate chargers! Powers your ${chargeDevices.map(d => d.name).join(', ')} from a single outlet at peak speeds without throttling.`;
       } else {
         chargerProduct = products.find(p => p.id === 'prod-acc-2'); // 65W GaN Dual Port
-        recommendedWattageText = `65W GaN (Powers ${laptop.name} @ 45W + ${phone.name} @ 20W simultaneously)`;
-        smartNote = `Dual-port GaN powers both your laptop and phone from a single compact socket.`;
+        recommendedWattageText = `65W GaN (Powers ${chargeDevices.map(d => d.name).join(' & ')} simultaneously)`;
+        smartNote = `Dual-port GaN powers your devices from a single compact socket.`;
       }
     } else if (laptop) {
       if (laptopW > 65) {
@@ -970,6 +1080,15 @@ export class CompatibilityEngine {
         recommendedWattageText = `65W USB-PD High Speed`;
       }
       smartNote = `Engineered for ${laptop.name} to deliver full workload wattage efficiently.`;
+    } else if (tablet) {
+      if (tabletW > 25) {
+        chargerProduct = products.find(p => p.id === 'prod-acc-8'); // 45W PPS
+        recommendedWattageText = `${tabletW}W Super Fast Charge 2.0 (PPS certified)`;
+      } else {
+        chargerProduct = products.find(p => p.id === 'prod-acc-7'); // 25W PPS
+        recommendedWattageText = `${tabletW}W USB-PD / PPS Fast Charge`;
+      }
+      smartNote = `Exact Power Delivery protocol match for ${tablet.name}.`;
     } else if (phone) {
       if (phoneW > 25) {
         chargerProduct = products.find(p => p.id === 'prod-acc-8'); // 45W PPS
@@ -986,10 +1105,7 @@ export class CompatibilityEngine {
         product: chargerProduct,
         role: isMultiDevice ? 'Multi-Port Charger' : 'Fast Charger',
         wattage: recommendedWattageText || `${chargerProduct.specs?.wattage}W`,
-        supportedDevices: [
-          phone ? phone.name : null,
-          laptop ? laptop.name : null
-        ].filter(Boolean).join(' & ')
+        supportedDevices: chargeDevices.map(d => d.name).join(' & ')
       });
     }
 
@@ -1006,17 +1122,22 @@ export class CompatibilityEngine {
       }
     }
 
-    if ((laptop && laptop.ports?.usbC) || (phone && phone.portType === 'USB-C')) {
+    const hasUsbCDevice = (laptop && laptop.ports?.usbC) || 
+                          (phone && phone.portType === 'USB-C') || 
+                          (tablet && (!tablet.portType || tablet.portType.includes('USB-C') || tablet.portType.includes('Thunderbolt')));
+    if (hasUsbCDevice) {
       const usbcCable = products.find(p => p.id === 'prod-acc-10');
       if (usbcCable) {
+        const supported = [
+          laptop ? laptop.name : null,
+          tablet ? tablet.name : null,
+          (phone && phone.portType === 'USB-C') ? phone.name : null
+        ].filter(Boolean);
         recommendedProducts.push({
           product: usbcCable,
           role: 'Charging Cable',
           wattage: '100W E-Marker PD',
-          supportedDevices: [
-            laptop ? laptop.name : null,
-            (phone && phone.portType === 'USB-C') ? phone.name : null
-          ].filter(Boolean).join(' & ')
+          supportedDevices: supported.join(' & ')
         });
       }
     }
@@ -1066,12 +1187,18 @@ export class CompatibilityEngine {
 
     // 3. Why this solution explanation
     let whyExplanation = '';
-    const deviceNames = [phone?.name, laptop?.name, tv?.name].filter(Boolean).join(', ');
+    const deviceNames = [laptop?.name, tablet?.name, phone?.name, tv?.name].filter(Boolean).join(', ');
 
     if (isMultiDevice) {
-      whyExplanation = `We tailored this solution for your ${deviceNames}. Your laptop requires ${laptopW}W and your phone takes ${phoneW}W. The ${chargerProduct?.name || 'multi-port charger'} powers both simultaneously at peak speeds, eliminating the need to buy and carry separate bulky plugs. Every cable and adapter included is certified to match the exact protocols (USB-PD 3.0, PPS, E-Marker) your devices use.`;
+      const parts = [];
+      if (laptop) parts.push(`laptop requires ${laptopW}W`);
+      if (tablet) parts.push(`tablet draws ${tabletW}W`);
+      if (phone) parts.push(`phone takes ${phoneW}W`);
+      whyExplanation = `We tailored this unified charging setup for your ${deviceNames}. Your ${parts.join(', ')}. The ${chargerProduct?.name || 'multi-port charger'} powers all your devices simultaneously at peak speeds from a single wall socket, eliminating the need to buy and carry separate bulky plugs. Every certified cable included supports high-current Power Delivery with E-Marker safety chips.`;
     } else if (laptop) {
       whyExplanation = `Engineered specifically for your ${laptop.name}. Provides full ${laptopW}W Power Delivery to prevent throttling during heavy use, combined with ${laptop.ports?.hdmi === 0 ? 'the HyperDrive hub to restore HDMI 4K video out and USB-A connectivity' : 'high-bandwidth certified cables'}.`;
+    } else if (tablet) {
+      whyExplanation = `Custom-engineered for your ${tablet.name}. Delivers safe, certified ${tabletW}W ${tablet.portType || 'USB-C'} fast-charging without overheating, perfectly matched to its power intake curve.`;
     } else if (phone) {
       whyExplanation = `Custom-tuned for your ${phone.name}. Delivers safe, certified ${phoneW}W ${phone.portType} charging without overheating, matching your phone manufacturer's peak charging curve.`;
     } else if (tv) {
@@ -1079,7 +1206,7 @@ export class CompatibilityEngine {
     }
 
     // Check if device info is incomplete
-    const isIncomplete = (phone && phone.isGeneric) || (laptop && laptop.isGeneric);
+    const isIncomplete = (phone && phone.isGeneric) || (laptop && laptop.isGeneric) || (tablet && tablet.isGeneric);
     const clarificationPrompt = isIncomplete
       ? "Tip: For exact wattage and pin matching, type your exact device model (e.g., 'Samsung A54 and Dell XPS 13')."
       : null;

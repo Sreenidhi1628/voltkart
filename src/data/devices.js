@@ -744,8 +744,90 @@ export const tvs = [
   }
 ];
 
+export const tablets = [
+  {
+    id: 'tablet-apple-ipad-10',
+    name: 'Apple iPad (10th Gen)',
+    brand: 'Apple',
+    portType: 'USB-C',
+    usbVersion: 'USB 2.0 (480Mbps)',
+    fastChargeWattage: 20,
+    chargingStandards: ['USB-PD 2.0'],
+    audioJack: false,
+    displayOut: 'DisplayPort over USB-C (4K 30Hz)',
+    bluetoothVersion: '5.2',
+    releaseYear: 2022
+  },
+  {
+    id: 'tablet-apple-ipad-air-m2',
+    name: 'Apple iPad Air 11" (M2)',
+    brand: 'Apple',
+    portType: 'USB-C',
+    usbVersion: 'USB 3.1 Gen 2 (10Gbps)',
+    fastChargeWattage: 30,
+    chargingStandards: ['USB-PD 3.0'],
+    audioJack: false,
+    displayOut: 'DisplayPort over USB-C (6K 60Hz)',
+    bluetoothVersion: '5.3',
+    releaseYear: 2024
+  },
+  {
+    id: 'tablet-apple-ipad-pro-m4',
+    name: 'Apple iPad Pro 13" (M4)',
+    brand: 'Apple',
+    portType: 'Thunderbolt / USB4',
+    usbVersion: 'Thunderbolt 3 / USB4 (40Gbps)',
+    fastChargeWattage: 35,
+    chargingStandards: ['USB-PD 3.0'],
+    audioJack: false,
+    displayOut: 'DisplayPort over Thunderbolt (6K 60Hz)',
+    bluetoothVersion: '5.3',
+    releaseYear: 2024
+  },
+  {
+    id: 'tablet-apple-ipad-mini-6',
+    name: 'Apple iPad mini (6th Gen)',
+    brand: 'Apple',
+    portType: 'USB-C',
+    usbVersion: 'USB 3.1 Gen 1 (5Gbps)',
+    fastChargeWattage: 20,
+    chargingStandards: ['USB-PD 2.0'],
+    audioJack: false,
+    displayOut: 'DisplayPort over USB-C (4K 30Hz)',
+    bluetoothVersion: '5.0',
+    releaseYear: 2021
+  },
+  {
+    id: 'tablet-samsung-galaxy-tab-s9',
+    name: 'Samsung Galaxy Tab S9',
+    brand: 'Samsung',
+    portType: 'USB-C',
+    usbVersion: 'USB 3.2 Gen 1 (5Gbps)',
+    fastChargeWattage: 45,
+    chargingStandards: ['Super Fast Charging 2.0', 'PPS', 'USB-PD 3.0'],
+    audioJack: false,
+    displayOut: 'DisplayPort over USB-C (Samsung DeX 4K)',
+    bluetoothVersion: '5.3',
+    releaseYear: 2023
+  },
+  {
+    id: 'tablet-samsung-galaxy-tab-a9',
+    name: 'Samsung Galaxy Tab A9',
+    brand: 'Samsung',
+    portType: 'USB-C',
+    usbVersion: 'USB 2.0 (480Mbps)',
+    fastChargeWattage: 15,
+    chargingStandards: ['Adaptive Fast Charging', 'USB-PD'],
+    audioJack: true,
+    displayOut: 'None',
+    bluetoothVersion: '5.3',
+    releaseYear: 2023
+  }
+];
+
 export const allDevices = {
   phones,
   laptops,
-  tvs
+  tvs,
+  tablets
 };

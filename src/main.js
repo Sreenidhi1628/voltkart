@@ -4,7 +4,7 @@ import { Flip } from 'gsap/Flip';
 import VanillaTilt from 'vanilla-tilt';
 
 import { products, categories } from './data/products.js';
-import { phones, laptops, tvs } from './data/devices.js';
+import { phones, laptops, tvs, tablets } from './data/devices.js';
 import { initPreloader } from './modules/preloader.js';
 import { initTheme } from './modules/theme.js';
 import { initCursor } from './modules/cursor.js';
@@ -752,7 +752,8 @@ function setupHomeSetupChecker() {
         const chosenPhone = phones.find(p => p.id === chosenId);
         const chosenLaptop = laptops.find(l => l.id === chosenId);
         const chosenTv = tvs.find(t => t.id === chosenId);
-        const chosen = chosenPhone || chosenLaptop || chosenTv;
+        const chosenTablet = tablets.find(t => t.id === chosenId);
+        const chosen = chosenPhone || chosenLaptop || chosenTv || chosenTablet;
         if (!chosen) return;
 
         const setup = { ...compatEngine.userSetup };
@@ -783,6 +784,20 @@ function setupHomeSetupChecker() {
           };
           if (laptopIdx > -1) {
             updatedItems[laptopIdx] = newChip;
+          } else {
+            updatedItems.push(newChip);
+          }
+        } else if (chosenTablet) {
+          setup.tabletId = chosen.id;
+          if (setup.customDevices) setup.customDevices.tablet = null;
+          const tabletIdx = updatedItems.findIndex(it => it.type === 'tablet');
+          const newChip = {
+            type: 'tablet',
+            id: chosen.id,
+            label: `Tablet: ${chosen.name.replace('Apple ', '')}`
+          };
+          if (tabletIdx > -1) {
+            updatedItems[tabletIdx] = newChip;
           } else {
             updatedItems.push(newChip);
           }
@@ -831,6 +846,9 @@ function setupHomeSetupChecker() {
         } else if (type === 'laptop') {
           setup.laptopId = null;
           setup.customDevices.laptop = null;
+        } else if (type === 'tablet') {
+          setup.tabletId = null;
+          setup.customDevices.tablet = null;
         } else if (type === 'tv') {
           setup.tvId = null;
           setup.customDevices.tv = null;
@@ -941,10 +959,12 @@ function setupHomeSetupChecker() {
           phoneId: result.phone ? result.phone.id : null,
           laptopId: result.laptop ? result.laptop.id : null,
           tvId: result.tv ? result.tv.id : null,
+          tabletId: result.tablet ? result.tablet.id : null,
           customDevices: {
             phone: result.phone || null,
             laptop: result.laptop || null,
             tv: result.tv || null,
+            tablet: result.tablet || null,
             audio: result.audio || null
           },
           isAnalyzedSetup: true
@@ -952,11 +972,22 @@ function setupHomeSetupChecker() {
 
         compatEngine.saveUserSetup(newSetup);
         renderResultCard(result.items, newSetup, result.suggestions || []);
+
+        // If user typed intent like "suggest chargers and cables", auto-scroll to the recommended solution
+        if (result.openSolution) {
+          setTimeout(() => {
+            const solEl = previewChips.querySelector('#rec-solution-section');
+            if (solEl) {
+              solEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+          }, 350);
+        }
       } else {
         compatEngine.saveUserSetup({
           phoneId: null,
           laptopId: null,
           tvId: null,
+          tabletId: null,
           customDevices: null,
           isAnalyzedSetup: true
         });
@@ -965,9 +996,17 @@ function setupHomeSetupChecker() {
     }, 1000);
   }
 
+  // Auto-resize textarea to fit 2-3 lines without scroll clipping
+  function autoResizeInput() {
+    input.style.height = 'auto';
+    input.style.height = Math.min(Math.max(input.scrollHeight, 40), 120) + 'px';
+  }
+  input.addEventListener('input', autoResizeInput);
+  autoResizeInput();
+
   btn.addEventListener('click', doAnalyze);
   input.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       doAnalyze();
     }

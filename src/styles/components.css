@@ -2260,13 +2260,20 @@ mark.search-highlight {
 
 .check-setup-demo-bar {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   background: var(--bg-tertiary);
   border: 1px solid var(--border-glass);
   border-radius: var(--radius-xl);
   padding: 8px 10px 8px 18px;
   box-shadow: 0 4px 15px rgba(15, 23, 42, 0.05);
   margin-bottom: var(--space-4);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.check-setup-demo-bar:focus-within {
+  border-color: var(--neon-cyan);
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.25);
 }
 
 .check-setup-demo-input {
@@ -2277,6 +2284,12 @@ mark.search-highlight {
   font-size: 0.95rem;
   outline: none;
   font-family: inherit;
+  resize: none;
+  min-height: 28px;
+  max-height: 110px;
+  line-height: 1.5;
+  padding: 6px 0;
+  overflow-y: auto;
 }
 
 .check-setup-demo-input::placeholder {
@@ -3395,6 +3408,13 @@ mark.search-highlight {
   }
   .check-setup-demo-bar {
     flex-direction: column;
+    align-items: stretch;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+  .check-setup-demo-input {
+    min-height: 48px;
+    width: 100%;
   }
   .check-setup-demo-btn {
     width: 100%;
