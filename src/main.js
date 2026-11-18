@@ -973,10 +973,12 @@ function setupHomeSetupChecker() {
     }
   });
 
-  // Initial load: parse the default input value and display the result card immediately
-  const initialResult = compatEngine.parsePlainEnglish(input.value.trim());
-  if (initialResult && initialResult.items && initialResult.items.length > 0) {
-    renderResultCard(initialResult.items, compatEngine.userSetup, initialResult.suggestions || []);
+  // Initial load: only parse and display if input has a pre-filled value
+  if (input.value && input.value.trim()) {
+    const initialResult = compatEngine.parsePlainEnglish(input.value.trim());
+    if (initialResult && initialResult.items && initialResult.items.length > 0) {
+      renderResultCard(initialResult.items, compatEngine.userSetup, initialResult.suggestions || []);
+    }
   }
 }
 

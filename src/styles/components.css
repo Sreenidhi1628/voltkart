@@ -2279,6 +2279,11 @@ mark.search-highlight {
   font-family: inherit;
 }
 
+.check-setup-demo-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.65;
+}
+
 .check-setup-demo-btn {
   display: flex;
   align-items: center;
