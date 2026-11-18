@@ -455,19 +455,46 @@ function setupNavigation() {
 
   if (!hamburgerBtn || !mobileNav) return;
 
+  function closeMobileNav() {
+    hamburgerBtn.classList.remove('active');
+    mobileNav.classList.remove('open');
+    hamburgerBtn.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('scroll-locked');
+    if (window.lenis) window.lenis.start();
+  }
+
   hamburgerBtn.addEventListener('click', () => {
     const isOpen = hamburgerBtn.classList.toggle('active');
     mobileNav.classList.toggle('open', isOpen);
     hamburgerBtn.setAttribute('aria-expanded', isOpen);
+    document.body.classList.toggle('scroll-locked', isOpen);
+    if (window.lenis) {
+      if (isOpen) window.lenis.stop();
+      else window.lenis.start();
+    }
   });
 
   document.querySelectorAll('.mobile-nav-link').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburgerBtn.classList.remove('active');
-      mobileNav.classList.remove('open');
-      hamburgerBtn.setAttribute('aria-expanded', 'false');
-    });
+    link.addEventListener('click', closeMobileNav);
   });
+
+  const mobileDevicesBtn = document.getElementById('mobile-open-devices-btn');
+  if (mobileDevicesBtn) {
+    mobileDevicesBtn.addEventListener('click', () => {
+      closeMobileNav();
+      const openBtn = document.getElementById('open-my-devices-btn');
+      if (openBtn) openBtn.click();
+    });
+  }
+
+  const mobileWishlistBtn = document.getElementById('mobile-open-wishlist-btn');
+  if (mobileWishlistBtn) {
+    mobileWishlistBtn.addEventListener('click', () => {
+      closeMobileNav();
+      const openBtn = document.getElementById('open-wishlist-btn');
+      if (openBtn) openBtn.click();
+    });
+  }
 }
 
 function setupFilterControls() {

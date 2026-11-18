@@ -176,12 +176,24 @@
   </header>
 
   <!-- Mobile Fullscreen Menu -->
-  <div class="mobile-nav-overlay" id="mobile-nav-overlay">
-    <a href="#hero" class="mobile-nav-link">Home</a>
-    <a href="#categories" class="mobile-nav-link">Categories</a>
-    <a href="#products" class="mobile-nav-link">Featured Products</a>
-    <a href="#showcase" class="mobile-nav-link">3D Showcase</a>
-    <a href="#check-setup" class="mobile-nav-link">Compatibility Checker</a>
+  <div class="mobile-nav-overlay" id="mobile-nav-overlay" data-lenis-prevent="true">
+    <nav class="mobile-nav-links">
+      <a href="#hero" class="mobile-nav-link">Home</a>
+      <a href="#categories" class="mobile-nav-link">Categories</a>
+      <a href="#products" class="mobile-nav-link">Featured Products</a>
+      <a href="#showcase" class="mobile-nav-link">3D Showcase</a>
+      <a href="#check-setup" class="mobile-nav-link">Compatibility Checker</a>
+    </nav>
+    <div class="mobile-nav-extras">
+      <button class="mobile-nav-extra-btn" id="mobile-open-devices-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        <span>My Hardware Ecosystem</span>
+      </button>
+      <button class="mobile-nav-extra-btn" id="mobile-open-wishlist-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span>Saved Wishlist</span>
+      </button>
+    </div>
   </div>
 
   <main>

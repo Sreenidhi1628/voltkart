@@ -44,6 +44,14 @@ export function initHero3D() {
   const phoneGroup = new THREE.Group();
   scene.add(phoneGroup);
 
+  function updatePhoneScale() {
+    const isMobile = window.innerWidth < 768;
+    const isSmallMobile = window.innerWidth < 420;
+    const s = isSmallMobile ? 0.72 : (isMobile ? 0.82 : 1.0);
+    phoneGroup.scale.set(s, s, s);
+  }
+  updatePhoneScale();
+
   // 1. Procedural Screen Dynamic Texture (Cyberpunk UI)
   const screenCanvas = document.createElement('canvas');
   screenCanvas.width = 1024;
@@ -397,6 +405,7 @@ export function initHero3D() {
     camera.aspect = newW / newH;
     camera.updateProjectionMatrix();
     renderer.setSize(newW, newH);
+    updatePhoneScale();
   }
 
   window.addEventListener('resize', handleResize);

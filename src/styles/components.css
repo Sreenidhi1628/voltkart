@@ -1974,7 +1974,7 @@ mark.search-highlight {
   position: absolute;
   top: 0;
   bottom: 0;
-  left: 65%;
+  left: 62%;
   width: 220px;
   transform: translateX(-50%);
   background: linear-gradient(
@@ -2095,6 +2095,30 @@ mark.search-highlight {
 [data-theme="dark"] .showcase-color-dot.active {
   border-color: #ffffff;
   box-shadow: 0 0 12px currentColor;
+}
+
+[data-theme="dark"] .showcase-colorways {
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+[data-theme="dark"] .showcase-colorway-label {
+  color: #94a3b8;
+}
+[data-theme="dark"] .showcase-colorway-label strong {
+  color: #f8fafc;
+}
+
+[data-theme="dark"] .callout-card {
+  background: rgba(15, 23, 42, 0.85);
+  border-color: rgba(56, 189, 248, 0.25);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+[data-theme="dark"] .callout-title {
+  color: #f8fafc;
+}
+[data-theme="dark"] .callout-desc {
+  color: #94a3b8;
 }
 
 /* 3D Spec Callouts */

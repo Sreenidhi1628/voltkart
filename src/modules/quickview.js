@@ -28,13 +28,24 @@ export function initQuickView() {
     }
   });
 
-  // Delegate clicks on quick view buttons
+  // Delegate clicks on quick view buttons and card media
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.quick-view-btn');
     if (btn) {
       const id = btn.getAttribute('data-quickview-id');
       const card = btn.closest('.product-card');
       openQuickView(id, card);
+      return;
+    }
+
+    // On touch mobile, tapping product image opens details
+    const media = e.target.closest('.card-media');
+    if (media && !e.target.closest('.add-to-cart-btn') && !e.target.closest('.wishlist-btn') && !e.target.closest('.compare-btn')) {
+      const card = media.closest('.product-card');
+      if (card) {
+        const id = card.getAttribute('data-product-id');
+        if (id) openQuickView(id, card);
+      }
     }
   });
 }

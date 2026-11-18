@@ -138,24 +138,24 @@ export function initShowcase3D() {
   scene.add(showcaseRing1);
 
   // Responsive scale & position: lower and shifted to the right on desktop/tablet, below text on mobile
-  let currentScale = 0.80;
+  let currentScale = 0.72;
   function updateLaptopTransform() {
     const w = window.innerWidth;
     if (w <= 768) {
       // Mobile: centered horizontally, placed lower so laptop sits cleanly below text
-      currentScale = 0.64;
-      laptopGroup.position.set(0, -0.95, 0);
-      showcaseRing1.position.set(0, -0.95, 0);
+      currentScale = 0.52;
+      laptopGroup.position.set(0, -0.50, 0);
+      showcaseRing1.position.set(0, -0.50, 0);
     } else if (w <= 1024) {
       // Tablet: shifted right and lower
-      currentScale = 0.74;
-      laptopGroup.position.set(0.9, -0.58, 0);
-      showcaseRing1.position.set(0.9, -0.58, 0);
+      currentScale = 0.65;
+      laptopGroup.position.set(0.65, -0.35, 0);
+      showcaseRing1.position.set(0.65, -0.35, 0);
     } else {
-      // Desktop: shifted right (x: 1.25) and lower (y: -0.55), clear gap from header and subtitle
-      currentScale = 0.80;
-      laptopGroup.position.set(1.25, -0.55, 0);
-      showcaseRing1.position.set(1.25, -0.55, 0);
+      // Desktop: shifted right (x: 0.95) and lower (y: -0.32), clear gap from header and subtitle
+      currentScale = 0.72;
+      laptopGroup.position.set(0.95, -0.32, 0);
+      showcaseRing1.position.set(0.95, -0.32, 0);
     }
     laptopGroup.scale.set(currentScale, currentScale, currentScale);
     showcaseRing1.scale.set(currentScale, currentScale, currentScale);
@@ -256,19 +256,32 @@ export function initShowcase3D() {
         { x: base * 0.94, y: base * 0.94, z: base * 0.94 }, 
         { x: base, y: base, z: base, duration: 0.4, ease: 'back.out(2)' }
       );
+      renderer.render(scene, camera);
     });
   });
 
-  // Render loop with intersection observer
-  let isVisible = false;
-  const observer = new IntersectionObserver((entries) => {
-    isVisible = entries[0].isIntersecting;
+  // Initial immediate render to guarantee visible canvas
+  renderer.render(scene, camera);
+
+  // Reliable render loop linked with ScrollTrigger & Page Visibility
+  let isVisible = true;
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top bottom',
+    end: 'bottom top',
+    onEnter: () => { isVisible = true; },
+    onLeave: () => { isVisible = false; },
+    onEnterBack: () => { isVisible = true; },
+    onLeaveBack: () => { isVisible = false; }
   });
-  observer.observe(section);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden) isVisible = true;
+  });
 
   function animate() {
     requestAnimationFrame(animate);
-    if (!isVisible) return;
+    if (!isVisible || document.hidden) return;
 
     showcaseRing1.rotation.y += 0.003;
     renderer.render(scene, camera);
